@@ -137,6 +137,18 @@
     <ClInclude Include="DualShock4.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
+    <ClInclude Include="Includes\Pcsx2Defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\Pcsx2Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\PS2Edefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\PS2Etypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="frog.ico">

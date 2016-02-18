@@ -146,7 +146,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Global.h</PrecompiledHeaderFile>
       <DisableSpecificWarnings>4995; 4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>../includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./includes</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
@@ -184,7 +184,7 @@
       <PrecompiledHeaderFile>Global.h</PrecompiledHeaderFile>
       <CallingConvention>FastCall</CallingConvention>
       <DisableSpecificWarnings>4995; 4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>../includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./includes</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -455,6 +455,10 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Diagnostics.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="Includes\Pcsx2Defs.h" />
+    <ClInclude Include="Includes\Pcsx2Types.h" />
+    <ClInclude Include="Includes\PS2Edefs.h" />
+    <ClInclude Include="Includes\PS2Etypes.h" />
     <ClInclude Include="Pcsx2Types.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="DirectInput.h" />
