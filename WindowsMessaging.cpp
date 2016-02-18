@@ -40,8 +40,8 @@ public:
 
 	int Activate(InitInfo *initInfo) {
 		// Redundant.  Should match the next line.
-		 Deactivate();
-		//if (wmk) wmk->Deactivate();
+		 //Deactivate();
+		if (wmk) wmk->Deactivate();
 
 		hWndProc = initInfo->hWndProc;
 

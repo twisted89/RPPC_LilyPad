@@ -651,16 +651,16 @@ void UpdateRP(unsigned int port, unsigned int slot, RPPadDataS* RPpad){
 	RPpad->axisRXUpdate = false;
 	RPpad->axisRYUpdate = false;
 	RPpad->btnUpdate = false;
-	//
-	//#ifdef _MSC_VER
-	//	if (windowThreadId != GetCurrentThreadId()) {
-	//		if (!updateQueued) {
-	//			updateQueued = 1;
-	//			PostMessage(hWnd, WMA_FORCE_UPDATE, FORCE_UPDATE_WPARAM, FORCE_UPDATE_LPARAM);
-	//		}
-	//		return;
-	//	}
-	//#endif
+
+#ifdef _MSC_VER
+	if (windowThreadId != GetCurrentThreadId()) {
+		//if (!updateQueued) {
+		//	updateQueued = 1;
+		//	PostMessage(hWnd, WMA_FORCE_UPDATE, FORCE_UPDATE_WPARAM, FORCE_UPDATE_LPARAM);
+		//}
+		return;
+	}
+#endif
 
 	dm->Update(&info);
 	for (int i = 0; i < dm->numDevices; i++) {
