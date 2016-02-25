@@ -701,11 +701,16 @@ void UpdateRP(unsigned int port, unsigned int slot, RPPadDataS* RPpad){
 
 				if (state == dev->oldVirtualControlState[b->controlIndex]) continue;
 
+				int btnVal = (1 << (cmd - 0x10));
+
 				if (state > dz){
 
 					if (cmd < 34) {
-						RPpad->buttonStatus += 1 << (cmd - 0x10);
-						RPpad->btnUpdate = true;
+						if ((RPpad->buttonStatus & btnVal) == 0){
+							RPpad->buttonStatus ^= btnVal;
+							RPpad->btnUpdate = true;
+						}
+
 					}
 					// Left stick.
 					else if (cmd < 38) {
@@ -749,8 +754,12 @@ void UpdateRP(unsigned int port, unsigned int slot, RPPadDataS* RPpad){
 				}
 				else{
 					if (cmd < 34) {
-						RPpad->buttonStatus -= 1 << (cmd - 0x10);
-						RPpad->btnUpdate = true;
+						if ((RPpad->buttonStatus & btnVal) > 0)
+						{
+							RPpad->buttonStatus ^= btnVal;
+							RPpad->btnUpdate = true;
+						}
+
 					}
 					// Left stick.
 					else if (cmd < 38) {
@@ -857,7 +866,7 @@ void Update(unsigned int port, unsigned int slot) {
 #endif
 
 	LastCheck = t;
-	}
+}
 
 void CALLBACK PADupdate(int port) {
 	Update(port + 3, 0);
@@ -1012,7 +1021,7 @@ s32 CALLBACK PADinit(u32 flags) {
 
 	DEBUG_TEXT_OUT("LilyPad initialized\n\n");
 	return 0;
-	}
+}
 
 
 
@@ -1022,13 +1031,13 @@ s32 CALLBACK PADinit(u32 flags) {
 #define SET_RESULT(a) { \
 	memcpy(query.response+2, a, sizeof(a)); \
 	query.numBytes = 2+sizeof(a); \
-		}
+			}
 
 #define SET_FINAL_RESULT(a) {			  \
 	memcpy(query.response+2, a, sizeof(a));\
 	query.numBytes = 2+sizeof(a);		  \
 	query.queryDone = 1;			  \
-		}
+			}
 
 static const u8 ConfigExit[7] = { 0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 //static const u8 ConfigExit[7] = {0x5A, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00};

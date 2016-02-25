@@ -21,14 +21,29 @@
 #include "InputManager.h"
 #include "XInputEnum.h"
 
+/* the secret function outputs a different struct than the official GetState. */
+typedef struct
+{
+	unsigned long eventCount;
+	WORD                                wButtons;
+	BYTE                                bLeftTrigger;
+	BYTE                                bRightTrigger;
+	SHORT                               sThumbLX;
+	SHORT                               sThumbLY;
+	SHORT                               sThumbRX;
+	SHORT                               sThumbRY;
+} XINPUT_GAMEPAD_SECRET;
+
 // This way, I don't require that XInput junk be installed.
 typedef void (CALLBACK *_XInputEnable)(BOOL enable);
 typedef DWORD (CALLBACK *_XInputGetState)(DWORD dwUserIndex, XINPUT_STATE* pState);
 typedef DWORD (CALLBACK *_XInputSetState)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
+typedef DWORD(CALLBACK *_XInputSecretGetState)(DWORD dwUserIndex, XINPUT_GAMEPAD_SECRET* pState);
 
 _XInputEnable pXInputEnable = 0;
 _XInputGetState pXInputGetState = 0;
 _XInputSetState pXInputSetState = 0;
+_XInputSecretGetState pXInputSecretGetState = 0;
 
 static int xInputActiveCount = 0;
 
@@ -39,6 +54,8 @@ __forceinline int ShortToAxis(int v) {
 	// Just double.
 	return v * 2;
 }
+
+static const int guide_button_value = 0x0400;
 
 class XInputDevice : public Device {
 	// Cached last vibration values by pad and motor.
@@ -114,21 +131,28 @@ public:
 
 	int Update() {
 		if (!active) return 0;
-		XINPUT_STATE state;
-		if (ERROR_SUCCESS != pXInputGetState(index, &state)) {
+		//XINPUT_STATE state;
+		//if (ERROR_SUCCESS != pXInputGetState(index, &state)) {
+		//	Deactivate();
+		//	return 0;
+		//}
+		XINPUT_GAMEPAD_SECRET state;
+		if (ERROR_SUCCESS != pXInputSecretGetState(index, &state)) {
 			Deactivate();
 			return 0;
 		}
-		int buttons = state.Gamepad.wButtons;
+		int buttons = state.wButtons;
+		if (buttons & guide_button_value)
+			printf("Guide button is down.\n");
 		for (int i=0; i<14; i++) {
 			physicalControlState[i] = ((buttons >> physicalControls[i].id)&1)<<16;
 		}
-		physicalControlState[14] = (((int)state.Gamepad.bLeftTrigger) + (state.Gamepad.bLeftTrigger>>7)) << 8;
-		physicalControlState[15] = (((int)state.Gamepad.bRightTrigger) + (state.Gamepad.bRightTrigger>>7)) << 8;
-		physicalControlState[16] = ShortToAxis(state.Gamepad.sThumbLX);
-		physicalControlState[17] = ShortToAxis(state.Gamepad.sThumbLY);
-		physicalControlState[18] = ShortToAxis(state.Gamepad.sThumbRX);
-		physicalControlState[19] = ShortToAxis(state.Gamepad.sThumbRY);
+		physicalControlState[14] = (((int)state.bLeftTrigger) + (state.bLeftTrigger>>7)) << 8;
+		physicalControlState[15] = (((int)state.bRightTrigger) + (state.bRightTrigger>>7)) << 8;
+		physicalControlState[16] = ShortToAxis(state.sThumbLX);
+		physicalControlState[17] = ShortToAxis(state.sThumbLY);
+		physicalControlState[18] = ShortToAxis(state.sThumbRX);
+		physicalControlState[19] = ShortToAxis(state.sThumbRY);
 		return 1;
 	}
 
@@ -196,7 +220,7 @@ void EnumXInputDevices() {
 		if (pXInputEnable) return;
 
 		HMODULE hMod = 0;
-		for (i=3; i>= 0; i--) {
+		for (i=4; i>= 0; i--) {
 			wsprintfW(temp, L"xinput1_%i.dll", i);
 			if (hMod = LoadLibraryW(temp)) break;
 		}
@@ -204,6 +228,7 @@ void EnumXInputDevices() {
 			if ((pXInputEnable = (_XInputEnable) GetProcAddress(hMod, "XInputEnable")) &&
 				(pXInputGetState = (_XInputGetState) GetProcAddress(hMod, "XInputGetState"))) {
 					pXInputSetState = (_XInputSetState) GetProcAddress(hMod, "XInputSetState");
+					pXInputSecretGetState = (_XInputSecretGetState)GetProcAddress(hMod, (LPCSTR)100);
 			}
 		}
 		if (!pXInputSetState) {

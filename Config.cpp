@@ -1876,6 +1876,15 @@ INT_PTR CALLBACK GeneralDialogProc(HWND hWnd, unsigned int msg, WPARAM wParam, L
 		EnableWindow(GetDlgItem(hWnd, IDC_G_DS4), 0);
 	}
 
+	if (config.keyboardApi < 0 || config.keyboardApi > 3) config.keyboardApi = NO_API;
+	CheckRadioButton(hWnd, IDC_KB_DISABLE, IDC_KB_RAW, IDC_KB_DISABLE + config.keyboardApi);
+	if (config.mouseApi < 0 || config.mouseApi > 3) config.mouseApi = NO_API;
+	CheckRadioButton(hWnd, IDC_M_DISABLE, IDC_M_RAW, IDC_M_DISABLE + config.mouseApi);
+
+	if (config.mouseApi)
+		config.bools[0] = true;
+
+
 	for (int j = 0; j < sizeof(BoolOptionsInfo) / sizeof(BoolOptionsInfo[0]); j++) {
 		CheckDlgButton(hWnd, BoolOptionsInfo[j].ControlId, BST_CHECKED * config.bools[j]);
 	}
@@ -1885,11 +1894,6 @@ INT_PTR CALLBACK GeneralDialogProc(HWND hWnd, unsigned int msg, WPARAM wParam, L
 
 	if (config.osVersion < 6) EnableWindow(GetDlgItem(hWnd, IDC_VISTA_VOLUME), 0);
 
-
-	if (config.keyboardApi < 0 || config.keyboardApi > 3) config.keyboardApi = NO_API;
-	CheckRadioButton(hWnd, IDC_KB_DISABLE, IDC_KB_RAW, IDC_KB_DISABLE + config.keyboardApi);
-	if (config.mouseApi < 0 || config.mouseApi > 3) config.mouseApi = NO_API;
-	CheckRadioButton(hWnd, IDC_M_DISABLE, IDC_M_RAW, IDC_M_DISABLE + config.mouseApi);
 
 	if (!InitializeRawInput()) {
 		EnableWindow(GetDlgItem(hWnd, IDC_KB_RAW), 0);
@@ -1977,6 +1981,9 @@ INT_PTR CALLBACK GeneralDialogProc(HWND hWnd, unsigned int msg, WPARAM wParam, L
 			else if (test == IDC_CLOSE_HACK2) {
 				CheckDlgButton(hWnd, IDC_CLOSE_HACK1, BST_UNCHECKED);
 			}
+			else if (test == IDC_M_DI || test == IDC_M_WM || test == IDC_M_RAW) {
+				CheckDlgButton(hWnd, IDC_FORCE_HIDE, BST_CHECKED);
+			}
 
 			int mtap = config.multitap[0] + 2 * config.multitap[1];
 			int vistaVol = config.vistaVolume;
@@ -1984,6 +1991,9 @@ INT_PTR CALLBACK GeneralDialogProc(HWND hWnd, unsigned int msg, WPARAM wParam, L
 			for (int j = 0; j < sizeof(BoolOptionsInfo) / sizeof(BoolOptionsInfo[0]); j++) {
 				config.bools[j] = (IsDlgButtonChecked(hWnd, BoolOptionsInfo[j].ControlId) == BST_CHECKED);
 			}
+
+			if (!config.bools[0])
+				CheckRadioButton(hWnd, IDC_M_DISABLE, IDC_M_RAW, IDC_M_DISABLE);
 
 			config.closeHacks = (IsDlgButtonChecked(hWnd, IDC_CLOSE_HACK1) == BST_CHECKED) |
 				((IsDlgButtonChecked(hWnd, IDC_CLOSE_HACK2) == BST_CHECKED) << 1);
