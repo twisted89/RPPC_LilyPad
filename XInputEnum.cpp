@@ -72,15 +72,15 @@ public:
 		memset(&xInputVibration, 0, sizeof(xInputVibration));
 		this->index = index;
 		int i;
-		for (i=0; i<14; i++) {
+		for (i=0; i<15; i++) {
 			// The i > 9 accounts for the 2 bit skip in button flags.
-			AddPhysicalControl(PSHBTN, i + 2*(i > 9), 0);
+			AddPhysicalControl(PSHBTN, i + 1*(i > 10), 0);
 		}
-		for (i=14; i<16; i++) {
+		for (i=15; i<17; i++) {
 			// The i > 9 accounts for the 2 bit skip in button flags.
-			AddPhysicalControl(PRESSURE_BTN, i + 2*(i > 9), 0);
+			AddPhysicalControl(PRESSURE_BTN, i + 1*(i > 10), 0);
 		}
-		for (; i<20; i++) {
+		for (; i<21; i++) {
 			AddPhysicalControl(ABSAXIS, i + 2, 0);
 		}
 		AddFFAxis(L"Slow Motor", 0);
@@ -100,6 +100,7 @@ public:
 			L"Right Thumb",
 			L"Left Shoulder",
 			L"Right Shoulder",
+			L"Guide Button",
 			L"A",
 			L"B",
 			L"X",
@@ -112,7 +113,7 @@ public:
 			L"Right Thumb Y",
 		};
 		unsigned int i = (unsigned int) (c - physicalControls);
-		if (i < 20) {
+		if (i < 21) {
 			return (wchar_t*)names[i];
 		}
 		return Device::GetPhysicalControlName(c);
@@ -144,15 +145,15 @@ public:
 		int buttons = state.wButtons;
 		if (buttons & guide_button_value)
 			printf("Guide button is down.\n");
-		for (int i=0; i<14; i++) {
+		for (int i=0; i<15; i++) {
 			physicalControlState[i] = ((buttons >> physicalControls[i].id)&1)<<16;
 		}
-		physicalControlState[14] = (((int)state.bLeftTrigger) + (state.bLeftTrigger>>7)) << 8;
-		physicalControlState[15] = (((int)state.bRightTrigger) + (state.bRightTrigger>>7)) << 8;
-		physicalControlState[16] = ShortToAxis(state.sThumbLX);
-		physicalControlState[17] = ShortToAxis(state.sThumbLY);
-		physicalControlState[18] = ShortToAxis(state.sThumbRX);
-		physicalControlState[19] = ShortToAxis(state.sThumbRY);
+		physicalControlState[15] = (((int)state.bLeftTrigger) + (state.bLeftTrigger>>7)) << 8;
+		physicalControlState[16] = (((int)state.bRightTrigger) + (state.bRightTrigger>>7)) << 8;
+		physicalControlState[17] = ShortToAxis(state.sThumbLX);
+		physicalControlState[18] = ShortToAxis(state.sThumbLY);
+		physicalControlState[19] = ShortToAxis(state.sThumbRX);
+		physicalControlState[20] = ShortToAxis(state.sThumbRY);
 		return 1;
 	}
 

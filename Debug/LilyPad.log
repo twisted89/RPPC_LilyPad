@@ -1,0 +1,33 @@
+﻿Build started 06/08/2016 11:07:53.
+     1>Project "C:\Users\Twisted\Documents\Visual Studio 2013\Projects\RemotePlay-Win32 - old GUI\LilyPad\LilyPad.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I./includes /Zi /nologo /W1 /WX- /Od /Oy- /D _USRDLL /D TEST_EXPORTS /D _USING_V110_SDK71_ /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"Global.h" /Fp"Debug\LilyPad.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /wd4995 /wd4996 /analyze- /errorReport:prompt LilyPad.cpp
+         LilyPad.cpp
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1197,5): warning MSB8030: The linker switch "Minimum Required Version" requires "SubSystem" to be set.  Without "SubSystem", the "Minimum Required Version" would not be passed to linker and could prevent to the output binary from running on older Operating Systems.
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Twisted\Documents\Visual Studio 2013\Projects\RemotePlay-Win32 - old GUI\Win32\Debug\LilyPad.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86" Setupapi.lib Winmm.lib ole32.lib advapi32.lib user32.lib kernel32.lib Comdlg32.lib dinput8.lib dxguid.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:".\LilyPad.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Twisted\Documents\Visual Studio 2013\Projects\RemotePlay-Win32 - old GUI\Win32\Debug\LilyPad.pdb" /TLBID:1 /DYNAMICBASE:NO /NXCOMPAT /IMPLIB:"C:\Users\Twisted\Documents\Visual Studio 2013\Projects\RemotePlay-Win32 - old GUI\Win32\Debug\LilyPad.lib" /MACHINE:X86 /SAFESEH /DLL Debug\LilyPad.res
+         Debug\Config.obj
+         Debug\Diagnostics.obj
+         Debug\LilyPad.obj
+         Debug\Global.obj
+         Debug\DirectInput.obj
+         Debug\DualShock4.obj
+         Debug\HidDevice.obj
+         Debug\KeyboardHook.obj
+         Debug\KeyboardQueue.obj
+         Debug\RawInput.obj
+         Debug\WindowsKeyboard.obj
+         Debug\WindowsMessaging.obj
+         Debug\WindowsMouse.obj
+         Debug\XInputEnum.obj
+         Debug\DeviceEnumerator.obj
+         Debug\InputManager.obj
+         Debug\VKey.obj
+         Debug\WndProcEater.obj
+            Creating library C:\Users\Twisted\Documents\Visual Studio 2013\Projects\RemotePlay-Win32 - old GUI\Win32\Debug\LilyPad.lib and object C:\Users\Twisted\Documents\Visual Studio 2013\Projects\RemotePlay-Win32 - old GUI\Win32\Debug\LilyPad.exp
+         LilyPad.vcxproj -> C:\Users\Twisted\Documents\Visual Studio 2013\Projects\RemotePlay-Win32 - old GUI\Win32\Debug\LilyPad.dll
+     1>Done Building Project "C:\Users\Twisted\Documents\Visual Studio 2013\Projects\RemotePlay-Win32 - old GUI\LilyPad\LilyPad.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.45

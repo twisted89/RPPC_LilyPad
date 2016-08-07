@@ -71,6 +71,8 @@ u8 miceEnabled;
 // 2 when both pads are initialized, 1 for one pad, etc.
 int openCount = 0;
 
+volatile bool configuring = false;
+
 int activeWindow = 0;
 #ifdef _MSC_VER
 int windowThreadId = 0;
@@ -632,7 +634,7 @@ void UpdateRP(unsigned int port, unsigned int slot, RPPadDataS* RPpad){
 #endif
 	static unsigned int LastCheck = 0;
 	unsigned int t = timeGetTime();
-	if (t - LastCheck < 15 || !openCount) return;
+	if (t - LastCheck < 10 || !openCount) return;
 
 	LastCheck = t;
 
@@ -646,11 +648,6 @@ void UpdateRP(unsigned int port, unsigned int slot, RPPadDataS* RPpad){
 	};
 #endif
 
-	RPpad->axisLXUpdate = false;
-	RPpad->axisLYUpdate = false;
-	RPpad->axisRXUpdate = false;
-	RPpad->axisRYUpdate = false;
-	RPpad->btnUpdate = false;
 
 #ifdef _MSC_VER
 	if (windowThreadId != GetCurrentThreadId()) {
@@ -699,14 +696,16 @@ void UpdateRP(unsigned int port, unsigned int slot, RPPadDataS* RPpad){
 
 				dev->virtualControlState[b->controlIndex] = state;
 
-				if (state == dev->oldVirtualControlState[b->controlIndex]) continue;
+				//if (state == dev->oldVirtualControlState[b->controlIndex]) continue;
 
 				int btnVal = (1 << (cmd - 0x10));
 
 				if (state > dz){
 
 					if (cmd < 34) {
+						if (state == dev->oldVirtualControlState[b->controlIndex]) continue;
 						if ((RPpad->buttonStatus & btnVal) == 0){
+							//Output("BTN ON:%d", btnVal);
 							RPpad->buttonStatus ^= btnVal;
 							RPpad->btnUpdate = true;
 						}
@@ -714,6 +713,7 @@ void UpdateRP(unsigned int port, unsigned int slot, RPPadDataS* RPpad){
 					}
 					// Left stick.
 					else if (cmd < 38) {
+						//Output("cmd: %d	val: %d\n", cmd, state);
 						if (cmd == 34){
 							RPpad->leftJoyY = -state;
 							RPpad->axisLYUpdate = true;
@@ -754,8 +754,10 @@ void UpdateRP(unsigned int port, unsigned int slot, RPPadDataS* RPpad){
 				}
 				else{
 					if (cmd < 34) {
+						if (state == dev->oldVirtualControlState[b->controlIndex]) continue;
 						if ((RPpad->buttonStatus & btnVal) > 0)
 						{
+							//Output("BTN OFF:%d", btnVal);
 							RPpad->buttonStatus ^= btnVal;
 							RPpad->btnUpdate = true;
 						}
@@ -1181,10 +1183,12 @@ DWORD WINAPI MaximizeWindowThreadProc(void *lpParameter) {
 #endif
 
 void CALLBACK PADconfigure() {
+	configuring = true;
 	if (openCount) {
-		return;
+		PADclose();
 	}
 	Configure();
+	configuring = false;
 }
 
 #ifdef _MSC_VER
@@ -1789,13 +1793,15 @@ s32 CALLBACK PADfreeze(int mode, freezeData *data) {
 }
 
 u32 CALLBACK PADreadPort1(RPPadDataS* RPpad) {
-
-	if (openCount)
-	{
+	if (!configuring && !openCount)
+		return 1;
+	else if (configuring)
+		return 2;
+	else{
 		UpdateRP(0, slots[0], RPpad);
 		return 0;
 	}
-	return 1;
+
 }
 
 u32 CALLBACK PADreadPort2(RPPadDataS* RPpad) {
